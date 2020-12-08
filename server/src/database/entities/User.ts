@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -6,18 +7,18 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ObjectType, Field } from 'type-graphql';
+import { ObjectType, Field, ID } from 'type-graphql';
 
 @ObjectType()
 @Entity('users')
-class User {
-  @Field()
+class User extends BaseEntity {
+  @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field()
+  @Field(() => String)
   @Column()
-  name: string;
+  username: string;
 
   @Column()
   password: string;
@@ -30,11 +31,11 @@ class User {
   @Column()
   avatar: string;
 
-  @Field()
+  @Field(() => Date)
   @CreateDateColumn()
   created_at: Date;
 
-  @Field()
+  @Field(() => Date)
   @UpdateDateColumn()
   updated_at: Date;
 }
