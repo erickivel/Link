@@ -11,12 +11,15 @@ import UserResolver from './resolvers/UserResolver';
 
   await createConnection();
 
-  const apolloServer = new ApolloServer({
-    schema: await buildSchema({
-      resolvers: [UserResolver],
-    }),
-    context: ({req, res}) => ({ req, res })
+  const schema = await buildSchema({
+    resolvers: [UserResolver],
   });
+
+  const apolloServer = new ApolloServer({
+    schema,
+    context: ({ req, res }) => ({ req, res })
+  });
+
 
   apolloServer.applyMiddleware({ app });
 

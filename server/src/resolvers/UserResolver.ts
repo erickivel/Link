@@ -5,9 +5,8 @@ import { sign } from 'jsonwebtoken';
 import User from '../database/entities/User';
 import MyContext from '../types/MyContext';
 import { ensureAuthenticated } from '../middleware/ensureAuthenticated';
-
 import authConfig from '../config/auth';
-import { DiskStorage } from '../utils/DiskStorage';
+
 
 @ObjectType()
 class LoginResponse {
@@ -22,7 +21,6 @@ class LoginResponse {
 export default class UserResolver {
   @Query(() => [User])
   async users(): Promise<User[]> {
-
     const users = await User.find();
 
     return users;
@@ -133,26 +131,4 @@ export default class UserResolver {
     return User.save(user);
   };
 
-  @Mutation(() => User)
-  @UseMiddleware(ensureAuthenticated)
-  async updateUserAvatar(
-    @Ctx () { userId }: MyContext,
-    @Arg('avatarFilename') avatarFilename: string,
-  ): Promise<User> {
-    const user = await User.findOne({ id: userId });
-
-    if (!user) {
-      throw new Error('User not found!');
-    }
-
-    if (user.avatar) {
-      await DiskStorage.deleteFile(user.avatar);
-    }
-
-    const filename = await DiskStorage.saveFile(avatarFilename);
-
-    user.avatar = filename;
-
-    return await User.save(user);
-  }
 }
