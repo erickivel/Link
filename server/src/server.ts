@@ -1,25 +1,25 @@
 import 'reflect-metadata';
 import express from 'express';
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer, PubSub } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import { createConnection } from 'typeorm';
 
 import UserResolver from './resolvers/UserResolver';
+import MessageResolver from './resolvers/MessageResolver';
 
 (async () => {
   const app = express();
 
   await createConnection();
 
-  const schema = await buildSchema({
-    resolvers: [UserResolver],
-  });
+  const pubsub = new PubSub();
 
   const apolloServer = new ApolloServer({
-    schema,
-    context: ({ req, res }) => ({ req, res })
+    schema: await buildSchema({
+      resolvers: [UserResolver, MessageResolver],
+    }),
+    context: ({ req, res }) => ({ req, res, pubsub }),
   });
-
 
   apolloServer.applyMiddleware({ app });
 
