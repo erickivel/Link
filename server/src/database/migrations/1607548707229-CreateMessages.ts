@@ -1,11 +1,10 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export default class CreateUsers1607294695428 implements MigrationInterface {
+export default class CreateMessages1607548707229 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
     await queryRunner.createTable(
       new Table({
-        name: 'users',
+        name: 'messages',
         columns: [
           {
             name: 'id',
@@ -15,24 +14,16 @@ export default class CreateUsers1607294695428 implements MigrationInterface {
             default: 'uuid_generate_v4()',
           },
           {
-            name: 'username',
-            type: 'varchar',
-            isUnique: true,
-          },
-          {
-            name: 'password',
+            name: 'text',
             type: 'varchar',
           },
           {
-            name: 'about',
-            type: 'varchar',
-            length: '140',
-            isNullable: true,
+            name: 'from',
+            type: 'uuid',
           },
           {
-            name: 'avatar',
-            type: 'integer',
-            isNullable: true,
+            name: 'to',
+            type: 'uuid',
           },
           {
             name: 'created_at',
@@ -45,11 +36,29 @@ export default class CreateUsers1607294695428 implements MigrationInterface {
             default: 'now()',
           },
         ],
+        foreignKeys: [
+          {
+            name: 'FromUserId',
+            columnNames: ['from'],
+            referencedColumnNames: ['id'],
+            referencedTableName: 'users',
+            onDelete: 'SET NULL',
+            onUpdate: 'CASCADE',
+          },
+          {
+            name: 'ToUserId',
+            columnNames: ['to'],
+            referencedColumnNames: ['id'],
+            referencedTableName: 'users',
+            onDelete: 'SET NULL',
+            onUpdate: 'CASCADE',
+          },
+        ],
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('users');
+    await queryRunner.dropTable('messages');
   }
 }
