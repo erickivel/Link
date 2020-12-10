@@ -1,12 +1,14 @@
 import {
   Arg,
-  Args,
   Ctx,
   Field,
   Mutation,
   ObjectType,
+  PubSub,
+  PubSubEngine,
   Query,
   Resolver,
+  Root,
   Subscription,
   UseMiddleware,
 } from 'type-graphql';
@@ -28,9 +30,11 @@ class ContactWithLastMessage {
 
 @Resolver()
 export default class MessageResolver {
-  @Subscription(() => Message, { topics: 'NEW_MESSAGE' })
-  newMessage(@Ctx() { pubSub }: MyContext): any {
-    return pubSub.asyncIterator('NEW_MESSAGE');
+  @Subscription({
+    topics: ({ args }) => args.topic,
+  })
+  newMessage(@Arg('topic') topic: string, @Root() message: Message): Message {
+    return message;
   }
 
   @Query(() => [Message])
@@ -116,9 +120,10 @@ export default class MessageResolver {
   @Mutation(() => Message)
   @UseMiddleware(ensureAuthenticated)
   async sendMessage(
-    @Ctx() { userId, pubSub }: MyContext,
+    @Ctx() { userId }: MyContext,
     @Arg('to') to: string,
     @Arg('text') text: string,
+    @PubSub() pubSub: PubSubEngine,
   ): Promise<Message> {
     const fromUserExists = await User.findOne({ id: to });
 
@@ -134,8 +139,11 @@ export default class MessageResolver {
       text,
     });
 
-    await pubSub.publish('NEW_MESSAGE', message);
+    const messageSaved = Message.save(message);
 
-    return Message.save(message);
+    await pubSub.publish(userId, messageSaved);
+    await pubSub.publish(to, messageSaved);
+
+    return messageSaved;
   }
 }
