@@ -27,9 +27,9 @@ class User extends BaseEntity {
   @Column()
   about: string;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Number, { nullable: true })
   @Column()
-  avatar: string;
+  avatar: number;
 
   @Field(() => Date)
   @CreateDateColumn()

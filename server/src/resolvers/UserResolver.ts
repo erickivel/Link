@@ -1,12 +1,20 @@
-import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver, UseMiddleware } from 'type-graphql';
+import {
+  Arg,
+  Ctx,
+  Field,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from 'type-graphql';
 import { hash, compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 
 import User from '../database/entities/User';
 import MyContext from '../types/MyContext';
-import { ensureAuthenticated } from '../middleware/ensureAuthenticated';
+import ensureAuthenticated from '../middleware/ensureAuthenticated';
 import authConfig from '../config/auth';
-
 
 @ObjectType()
 class LoginResponse {
@@ -26,10 +34,12 @@ export default class UserResolver {
     return users;
   }
 
-  @Query(() => User, { nullable: true })
+  @Query(() => User)
   @UseMiddleware(ensureAuthenticated)
-  async me(@Ctx() { userId }:MyContext): Promise<User | undefined> {
-    const user = await User.findOne({ id: userId });
+  async me(@Ctx() { userId }: MyContext): Promise<User> {
+    const user = await User.findOneOrFail({
+      id: userId,
+    });
 
     return user;
   }
@@ -39,7 +49,6 @@ export default class UserResolver {
     @Arg('username') username: string,
     @Arg('password') password: string,
     @Arg('about', { nullable: true }) about?: string,
-
   ): Promise<User> {
     const userExists = await User.findOne({ username });
 
@@ -63,7 +72,7 @@ export default class UserResolver {
   @Mutation(() => LoginResponse)
   async login(
     @Arg('username') username: string,
-    @Arg('password') password: string
+    @Arg('password') password: string,
   ): Promise<LoginResponse> {
     const user = await User.findOne({ username });
 
@@ -87,15 +96,16 @@ export default class UserResolver {
     return {
       user,
       token,
-    }
+    };
   }
 
   @Mutation(() => User)
   @UseMiddleware(ensureAuthenticated)
-  async updateUser (
-    @Ctx () { userId }:MyContext,
+  async updateUser(
+    @Ctx() { userId }: MyContext,
     @Arg('username') username: string,
     @Arg('about') about: string,
+    @Arg('avatar') avatar: number,
     @Arg('old_password', { nullable: true }) old_password: string,
     @Arg('password', { nullable: true }) password: string,
   ): Promise<User> {
@@ -113,9 +123,12 @@ export default class UserResolver {
 
     user.username = username;
     user.about = about;
+    user.avatar = avatar;
 
     if (password && !old_password) {
-      throw new Error('You need to inform the old password to set a new password');
+      throw new Error(
+        'You need to inform the old password to set a new password',
+      );
     }
 
     if (password && old_password) {
@@ -129,6 +142,5 @@ export default class UserResolver {
     }
 
     return User.save(user);
-  };
-
+  }
 }
