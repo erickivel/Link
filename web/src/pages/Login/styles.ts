@@ -1,3 +1,4 @@
+import { shade } from 'polished';
 import styled from 'styled-components';
 
 export const Container = styled.div`
@@ -20,8 +21,8 @@ export const Images = styled.div`
 
   img.hero {
     position: absolute;
-    width: 784px;
-    bottom: -10%;
+    width: 90%;
+    bottom: -25%;
     left: -5%;
   }
 `;
@@ -36,4 +37,39 @@ export const Content = styled.div`
   max-width: 672px;
 
   background-color: #4a405f;
+
+  form {
+    width: 100%;
+    max-width: 352px;
+    text-align: center;
+
+    h1 {
+      font-family: 'Poppins';
+      color: #ede8f4;
+      font-size: 36px;
+      font-weight: normal;
+
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    input {
+      margin-bottom: 16px;
+    }
+
+    button {
+      margin-bottom: 16px;
+    }
+
+    a {
+      text-decoration: none;
+      font-family: 'Roboto';
+      font-size: 16px;
+      color: #ede8f4;
+
+      &:hover {
+        color: ${shade(0.2, '#ede8f4')};
+      }
+    }
+  }
 `;
