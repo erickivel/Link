@@ -16,7 +16,7 @@ const AccountInfo: React.FC = () => {
           alt=""
         />
         <button type="button" className="avatar">
-          <FiCamera stroke-width={1.5} color="#EDE8F4" size={18} />
+          <FiCamera stroke-width={1.5} color="#EDE8F4" size={24} />
         </button>
       </div>
 

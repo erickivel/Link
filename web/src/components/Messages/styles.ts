@@ -1,3 +1,4 @@
+import { shade } from 'polished';
 import styled from 'styled-components';
 
 export const Container = styled.div`
@@ -23,7 +24,7 @@ export const Container = styled.div`
 `;
 
 export const Contacts = styled.div`
-  margin: 12px 32px;
+  margin: 12px 0;
 
   div:last-child {
     border: 0;
@@ -31,10 +32,24 @@ export const Contacts = styled.div`
 `;
 
 export const ContactItem = styled.div`
-  padding: 12px 0;
-  border-bottom: 1px solid #342b44;
+  padding: 12px 32px;
   display: flex;
   align-items: center;
+  position: relative;
+
+  transition: background-color 0.1s;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 360px;
+    bottom: 0;
+    border-bottom: 1px solid #342b44;
+  }
+
+  &:hover {
+    background: ${shade(0.2, '#4a405f')};
+  }
 
   img {
     width: 48px;

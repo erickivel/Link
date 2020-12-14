@@ -1,6 +1,10 @@
 import styled, { css } from 'styled-components';
 import { shade } from 'polished';
 
+interface NavigationProps {
+  currentNav: 'messages' | 'contacts' | 'accountInfo';
+}
+
 interface MessageProps {
   messageType: 'in' | 'out';
 }
@@ -59,7 +63,7 @@ export const UserHeader = styled.header`
   }
 `;
 
-export const Navigation = styled.nav`
+export const Navigation = styled.nav<NavigationProps>`
   grid-area: navigation;
   background: #635878;
   border-right: 1px solid #272333;
@@ -77,7 +81,7 @@ export const Navigation = styled.nav`
     border: 0;
     background: #635878;
 
-    transition: background-color 0.4s;
+    transition: background-color 0.3s;
 
     svg {
       transition: stroke 0.4s;
@@ -89,6 +93,14 @@ export const Navigation = styled.nav`
       svg {
         stroke: #635878;
       }
+    }
+  }
+
+  button.${props => `${props.currentNav}-nav`} {
+    background: #342b44;
+
+    svg {
+      stroke: #635878;
     }
   }
 `;
