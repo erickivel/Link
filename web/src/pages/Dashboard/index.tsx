@@ -8,7 +8,6 @@ import AccountInfo from '../../components/AccountInfo';
 import LogoImg from '../../assets/logo.svg';
 import LeftTail from '../../assets/left-tail.svg';
 import RightTail from '../../assets/right-tail.svg';
-import { useAuth } from '../../hooks/auth';
 
 import {
   Container,
@@ -22,8 +21,6 @@ import {
 } from './styles';
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
-
   const [currentNav, setCurrentNav] = useState<
     'messages' | 'contacts' | 'accountInfo'
   >('messages');
@@ -37,7 +34,7 @@ const Dashboard: React.FC = () => {
               src="https://avatars2.githubusercontent.com/u/68995946?s=460&u=74f344654452d350d8139574615fbe3e1ef57684&v=4"
               alt=""
             />
-            <strong>{user.username}</strong>
+            <strong>Eric</strong>
           </div>
           <img className="logo" src={LogoImg} alt="Link" />
         </UserHeader>

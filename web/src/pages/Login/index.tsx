@@ -1,15 +1,21 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { Form } from '@unform/web';
 import { Link, useHistory } from 'react-router-dom';
+import * as Yup from 'yup';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-import { gql, useMutation } from '@apollo/client';
-import { useAuth } from '../../hooks/auth';
+import { FormHandles } from '@unform/core';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import LogoImg from '../../assets/logo.svg';
 import LoginImg from '../../assets/loginImg.svg';
 
+import { useLoginMutation } from '../../gql/generated/graphql';
+import { useAppState } from '../../hooks/apollo';
+
 import { Container, Images, Content, AnimationContainer } from './styles';
+import getValidationErrors from '../../utils/getValidationErrors';
 
 interface SignInFormData {
   username: string;
@@ -17,32 +23,70 @@ interface SignInFormData {
 }
 
 const Login: React.FC = () => {
+  const formRef = useRef<FormHandles>(null);
   const history = useHistory();
-  const { signIn } = useAuth();
+  const { appSetLogin } = useAppState();
+  const [login] = useLoginMutation();
 
   const handleSubmit = useCallback(
-    async ({ username, password }: SignInFormData) => {
-      await signIn({ username, password });
+    async (formData: SignInFormData) => {
+      try {
+        formRef.current?.setErrors({});
 
-      return history.push('/dashboard');
+        const schema = Yup.object().shape({
+          username: Yup.string().required('Nome obrigatório'),
+          password: Yup.string().required('Senha obrigatória'),
+        });
+
+        await schema.validate(formData, {
+          abortEarly: false,
+        });
+
+        const { data } = await login({
+          variables: {
+            username: formData.username,
+            password: formData.password,
+          },
+        });
+        if (
+          data === undefined ||
+          data?.login === undefined ||
+          data?.login.token === undefined
+        ) {
+          throw new Error('Invalid credentials');
+        }
+        appSetLogin(data.login?.token);
+        localStorage.setItem('@Link:token', data.login?.token);
+        history.replace('/dashboard');
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+
+          formRef.current?.setErrors(errors);
+
+          return;
+        }
+        toast.error('Email/senha inválidos');
+      }
     },
-    [history, signIn],
+    [history, login, appSetLogin],
   );
 
   return (
     <Container>
+      <ToastContainer />
       <Images>
         <img className="logo" src={LogoImg} alt="Link" />
         <img className="hero" src={LoginImg} alt="Hero" />
       </Images>
       <Content>
         <AnimationContainer>
-          <Form onSubmit={handleSubmit}>
+          <Form ref={formRef} onSubmit={handleSubmit}>
             <h1>Fazer Login</h1>
 
             <Input name="username" placeholder="Nome" />
 
-            <Input name="password" placeholder="Senha" />
+            <Input type="password" name="password" placeholder="Senha" />
 
             <Button type="submit">Entrar</Button>
 

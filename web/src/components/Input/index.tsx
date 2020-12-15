@@ -33,13 +33,17 @@ const Input: React.FC<InputProps> = ({ name, textArea, ...rest }) => {
           placeholder="Escreva um recado (aparecerá para outros usuários)"
         />
       ) : (
-        <input
-          type="text"
-          id={fieldName}
-          ref={inputRef}
-          defaultValue={defaultValue}
-          {...rest}
-        />
+        <>
+          <input
+            type="text"
+            id={fieldName}
+            ref={inputRef}
+            defaultValue={defaultValue}
+            {...rest}
+          />
+
+          {error && <span>{error}</span>}
+        </>
       )}
     </Container>
   );

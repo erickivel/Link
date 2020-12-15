@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Route as ReactDOMRoute,
   RouteProps as ReactDOMRouteProps,
   Redirect,
 } from 'react-router-dom';
 
-import { useAuth } from '../hooks/auth';
+import { AppStateContext } from '../hooks/apollo';
 
 interface RouteProps extends ReactDOMRouteProps {
   isPrivate?: boolean;
@@ -17,13 +17,13 @@ const Route: React.FC<RouteProps> = ({
   component: Component,
   ...rest
 }) => {
-  const { user } = useAuth();
+  const { appState } = useContext(AppStateContext);
 
   return (
     <ReactDOMRoute
       {...rest}
       render={({ location }) => {
-        return isPrivate === !!user ? (
+        return isPrivate === !!appState.loggedIn ? (
           <Component />
         ) : (
           <Redirect

@@ -60,7 +60,6 @@ const AuthProvider: React.FC = ({ children }) => {
     { username: string; password: string }
   >(LOGIN, {
     onCompleted(ndata) {
-      console.log(ndata);
       localStorage.setItem('@Link:token', ndata.login.token);
       localStorage.setItem('@Link:user', JSON.stringify(ndata.login.user));
       history.push('/dashboard');
@@ -76,9 +75,8 @@ const AuthProvider: React.FC = ({ children }) => {
       }
 
       history.push('/dashboard');
-      console.log(userData);
     },
-    [login, userData, history, data],
+    [login, history, data],
   );
 
   return (

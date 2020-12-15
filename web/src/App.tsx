@@ -4,14 +4,14 @@ import { BrowserRouter } from 'react-router-dom';
 import GlobalStyle from './styles/global';
 
 import Routes from './routes';
-import AppProvider from './hooks';
+import { AppStateProvider } from './hooks/apollo';
 
 const App: React.FC = () => {
   return (
     <BrowserRouter>
-      <AppProvider>
+      <AppStateProvider>
         <Routes />
-      </AppProvider>
+      </AppStateProvider>
 
       <GlobalStyle />
     </BrowserRouter>

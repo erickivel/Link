@@ -6,6 +6,8 @@ export const Container = styled.div`
 
   display: flex;
   align-items: stretch;
+
+  overflow: hidden;
 `;
 
 export const Images = styled.div`
