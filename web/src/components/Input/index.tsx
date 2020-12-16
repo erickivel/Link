@@ -25,13 +25,17 @@ const Input: React.FC<InputProps> = ({ name, textArea, ...rest }) => {
   return (
     <Container>
       {textArea ? (
-        <textarea
-          maxLength={120}
-          id={fieldName}
-          ref={inputRef}
-          defaultValue={defaultValue}
-          placeholder="Escreva um recado (aparecerá para outros usuários)"
-        />
+        <>
+          <textarea
+            maxLength={120}
+            id={fieldName}
+            ref={inputRef}
+            defaultValue={defaultValue}
+            placeholder="Escreva um recado (aparecerá para outros usuários)"
+          />
+
+          {error && <span>{error}</span>}
+        </>
       ) : (
         <>
           <input

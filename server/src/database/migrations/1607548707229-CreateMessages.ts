@@ -27,7 +27,7 @@ export default class CreateMessages1607548707229 implements MigrationInterface {
           },
           {
             name: 'created_at',
-            type: 'timestamp',
+            type: 'timestamp with time zone',
             default: 'now()',
           },
           {

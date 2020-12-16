@@ -122,7 +122,7 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation' } & {
   login: { __typename?: 'LoginResponse' } & Pick<LoginResponse, 'token'> & {
-      user: { __typename?: 'User' } & Pick<User, 'id' | 'username'>;
+      user: { __typename?: 'User' } & Pick<User, 'id' | 'username' | 'about'>;
     };
 };
 
@@ -175,7 +175,7 @@ export type ListMessagesOfSpecificContactQuery = { __typename?: 'Query' } & {
   listMessagesOfSpecificContact: Array<
     { __typename?: 'Message' } & Pick<
       Message,
-      'to' | 'from' | 'text' | 'created_at'
+      'id' | 'to' | 'from' | 'text' | 'created_at'
     >
   >;
 };
@@ -263,6 +263,7 @@ export const LoginDocument = gql`
       user {
         id
         username
+        about
       }
       token
     }
@@ -519,6 +520,7 @@ export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const ListMessagesOfSpecificContactDocument = gql`
   query ListMessagesOfSpecificContact($contact_id: String!) {
     listMessagesOfSpecificContact(contact_id: $contact_id) {
+      id
       to
       from
       text

@@ -25,7 +25,7 @@ interface SignInFormData {
 const Login: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const history = useHistory();
-  const { appSetLogin } = useAppState();
+  const { appLogin } = useAppState();
   const [login] = useLoginMutation();
 
   const handleSubmit = useCallback(
@@ -35,7 +35,9 @@ const Login: React.FC = () => {
 
         const schema = Yup.object().shape({
           username: Yup.string().required('Nome obrigatório'),
-          password: Yup.string().required('Senha obrigatória'),
+          password: Yup.string()
+            .min(6, 'A senha deve ter no mínimo 6 dígitos')
+            .required('Senha obrigatória'),
         });
 
         await schema.validate(formData, {
@@ -51,13 +53,14 @@ const Login: React.FC = () => {
         if (
           data === undefined ||
           data?.login === undefined ||
-          data?.login.token === undefined
+          data?.login.token === undefined ||
+          data?.login.user === undefined
         ) {
           throw new Error('Invalid credentials');
         }
-        appSetLogin(data.login?.token);
-        localStorage.setItem('@Link:token', data.login?.token);
-        history.replace('/dashboard');
+        appLogin({ token: data.login?.token, user: data.login.user });
+
+        history.push('/dashboard');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -69,7 +72,7 @@ const Login: React.FC = () => {
         toast.error('Email/senha inválidos');
       }
     },
-    [history, login, appSetLogin],
+    [history, login, appLogin],
   );
 
   return (

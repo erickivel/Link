@@ -28,10 +28,19 @@ class LoginResponse {
 @Resolver()
 export default class UserResolver {
   @Query(() => [User])
-  async users(): Promise<User[]> {
+  @UseMiddleware(ensureAuthenticated)
+  async users(@Ctx() { userId }: MyContext): Promise<User[]> {
     const users = await User.find();
 
-    return users;
+    const user = await User.findOne({ id: userId });
+
+    if (!user) {
+      throw new Error('User does not exist!');
+    }
+
+    const usersWithoutCurrentUser = users.filter(u => u.id !== user.id);
+
+    return usersWithoutCurrentUser;
   }
 
   @Query(() => User)

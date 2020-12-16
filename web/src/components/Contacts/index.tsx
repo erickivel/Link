@@ -1,33 +1,38 @@
-import React from 'react';
-import { gql, useQuery } from '@apollo/client';
+import React, { useState } from 'react';
+
+import { useUsersQuery } from '../../gql/generated/graphql';
+import { useAppState } from '../../hooks/apollo';
 
 import { Container, ContactsBox, ContactItem } from './styles';
 
 interface User {
   id: string;
   username: string;
-  about: string;
+  avatar?: number | null | undefined;
+  about?: string | undefined | null;
 }
 
-const Contacts: React.FC = () => {
-  const ALL_USERS = gql`
-    query users {
-      users {
-        id
-        username
-        about
-      }
-    }
-  `;
+interface ContactsProps {
+  setToChat(user: User): void;
+}
 
-  const { data } = useQuery(ALL_USERS);
-  console.log(data);
+const Contacts: React.FC<ContactsProps> = ({ setToChat }) => {
+  const { data } = useUsersQuery();
+  const [currentUser, setCurrentUser] = useState('');
 
   return (
     <Container>
       <ContactsBox>
-        {data.users.map((user: User) => (
-          <ContactItem key={user.id}>
+        {data?.users.map(user => (
+          <ContactItem
+            key={user.id}
+            contactId={user.id}
+            currentUser={currentUser}
+            onClick={() => {
+              setToChat(user);
+              setCurrentUser(user.id);
+            }}
+          >
             <img
               src="https://avatars2.githubusercontent.com/u/68995946?s=460&u=74f344654452d350d8139574615fbe3e1ef57684&v=4"
               alt=""

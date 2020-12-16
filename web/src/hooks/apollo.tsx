@@ -1,58 +1,82 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useState } from 'react';
 import {
   ApolloProvider,
   ApolloClient,
   InMemoryCache,
   HttpLink,
+  split,
   ApolloLink,
   Observable,
 } from '@apollo/client';
+import { getMainDefinition } from '@apollo/client/utilities';
+import { WebSocketLink } from '@apollo/client/link/ws';
 
-interface ApolloContextData {
-  appState: {
-    loggedIn: boolean;
-  };
-  appSetLogin: (token: string) => void;
-  appSetLogout: () => void;
-  appSetAuthToken: (token: string) => void;
-  appClearAuthToken: () => void;
+interface User {
+  id: string;
+  username: string;
+  avatar?: number | null | undefined;
+  about?: string | undefined | null;
 }
 
-let authToken = localStorage.getItem('@Link:token') || '';
+interface AuthState {
+  token: string;
+  user: User;
+}
+
+interface ApolloContextData {
+  user: User;
+  appLogin(userData: AuthState): void;
+  appLogout(): void;
+  updateUser(user: User): void;
+}
 
 export const AppStateContext = createContext<ApolloContextData>(
   {} as ApolloContextData,
 );
 
 const AppStateProvider: React.FC = ({ children }) => {
-  const [appState, setAppState] = useState(() => {
-    if (localStorage.getItem('@Link:token')) {
-      return { loggedIn: true };
+  const [data, setData] = useState<AuthState>(() => {
+    const token = localStorage.getItem('@Link:token');
+    const user = localStorage.getItem('@Link:user');
+
+    if (user && token) {
+      return {
+        token,
+        user: JSON.parse(user),
+      };
     }
 
-    return { loggedIn: false };
+    return {} as AuthState;
   });
 
-  const appSetLogin = (token: string) => {
-    authToken = token;
-    setAppState({ ...appState, loggedIn: true });
-  };
+  const appLogin = useCallback(({ token, user }: AuthState) => {
+    localStorage.setItem('@Link:token', token);
+    localStorage.setItem('@Link:user', JSON.stringify(user));
 
-  const appSetLogout = () => {
-    authToken = '';
-    localStorage.removeItem('@Link:token');
-    setAppState({ ...appState, loggedIn: false });
-  };
+    setData({
+      token,
+      user,
+    });
+  }, []);
 
-  const appSetAuthToken = (token: string) => {
-    authToken = token;
-  };
-  const appClearAuthToken = () => {
-    authToken = '';
-  };
-  const appGetAuthToken = (): string => {
-    return authToken;
-  };
+  const appLogout = useCallback(() => {
+    localStorage.removeItem('@GoBarber:token');
+    localStorage.removeItem('@GoBarber:user');
+
+    setData({} as AuthState);
+  }, []);
+
+  const updateUser = useCallback(
+    (user: User) => {
+      localStorage.setItem('@Link:user', JSON.stringify(user));
+
+      setData({
+        token: data.token,
+        user,
+      });
+    },
+    [setData, data.token],
+  );
 
   const cache = new InMemoryCache({});
   const requestLink = new ApolloLink(
@@ -62,7 +86,7 @@ const AppStateProvider: React.FC = ({ children }) => {
         Promise.resolve(operation)
           .then(res => {
             res.setContext({
-              headers: { authorization: `Bearer ${appGetAuthToken()}` },
+              headers: { authorization: `Bearer ${data.token}` },
             });
           })
           .then(() => {
@@ -79,24 +103,41 @@ const AppStateProvider: React.FC = ({ children }) => {
       }),
   );
 
+  const httpLink = new HttpLink({
+    uri: 'http://localhost:4000/graphql',
+  });
+
+  const wsLink = new WebSocketLink({
+    uri: 'ws://localhost:4000/graphql',
+    options: {
+      reconnect: true,
+    },
+  });
+
+  const splitLink = split(
+    ({ query }) => {
+      const definition = getMainDefinition(query);
+      return (
+        definition.kind === 'OperationDefinition' &&
+        definition.operation === 'subscription'
+      );
+    },
+    wsLink,
+    httpLink,
+  );
+
   const client = new ApolloClient({
-    link: ApolloLink.from([
-      requestLink,
-      new HttpLink({
-        uri: 'http://localhost:4000/graphql',
-      }),
-    ]),
+    link: ApolloLink.from([requestLink, splitLink]),
     cache,
   });
 
   return (
     <AppStateContext.Provider
       value={{
-        appState,
-        appSetLogin,
-        appSetLogout,
-        appSetAuthToken,
-        appClearAuthToken,
+        user: data.user,
+        appLogin,
+        appLogout,
+        updateUser,
       }}
     >
       <ApolloProvider client={client}>{children}</ApolloProvider>

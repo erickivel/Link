@@ -12,11 +12,13 @@ interface MessageProps {
 export const Container = styled.div`
   background: #272333;
   height: 100vh;
-  padding-top: 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 export const Content = styled.div`
-  height: 90vh;
+  height: 93vh;
   width: 100%;
   max-width: 1120px;
   margin: 0 auto;
@@ -181,40 +183,47 @@ export const InputMessage = styled.div`
   align-items: center;
   justify-content: space-between;
 
-  input {
-    height: 40px;
-    width: 90%;
-    margin-left: 16px;
-    background: #4a405f;
-    border: 1px solid #4a405f;
-    border-radius: 20px;
-    font-size: 14px;
-    color: #ede8f4;
-    padding: 12px 24px;
+  form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    transition: border-color 0.2s;
-
-    &::placeholder {
-      color: #bcb2c0;
+    input {
+      height: 40px;
+      width: 90%;
+      margin-left: 16px;
+      background: #4a405f;
+      border: 1px solid #4a405f;
+      border-radius: 20px;
       font-size: 14px;
+      color: #ede8f4;
+      padding: 12px 24px;
+
+      transition: border-color 0.2s;
+
+      &::placeholder {
+        color: #bcb2c0;
+        font-size: 14px;
+      }
+
+      &:focus {
+        border: 1px solid #342b44;
+      }
     }
 
-    &:focus {
-      border: 1px solid #342b44;
-    }
-  }
+    button {
+      background: transparent;
+      border: 0;
+      margin-right: 16px;
 
-  button {
-    background: transparent;
-    border: 0;
-    margin-right: 16px;
+      svg {
+        transform: rotate(45deg);
+        transition: stroke 0.2s;
 
-    svg {
-      transform: rotate(45deg);
-      transition: stroke 0.2s;
-
-      &:hover {
-        stroke: ${shade(0.2, '#342B44')};
+        &:hover {
+          stroke: ${shade(0.2, '#342B44')};
+        }
       }
     }
   }

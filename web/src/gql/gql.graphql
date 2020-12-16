@@ -9,6 +9,7 @@ mutation Login($password: String!, $username: String!) {
     user {
       id
       username
+      about
     }
     token
   }
@@ -63,6 +64,7 @@ query Me {
 
 query ListMessagesOfSpecificContact($contact_id: String!) {
   listMessagesOfSpecificContact(contact_id: $contact_id) {
+    id
     to
     from
     text
