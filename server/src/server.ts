@@ -14,12 +14,7 @@ import checkAuthenticated from './utils/checkAuthenticated';
   const app = express();
   app.use(express.json());
 
-  app.use(
-    cors({
-      origin: 'http://localhost:3000',
-      credentials: true,
-    }),
-  );
+  app.use(cors());
 
   await createConnection();
 
@@ -43,6 +38,7 @@ import checkAuthenticated from './utils/checkAuthenticated';
           throw new Error('Token invalid');
         }
       },
+      path: '/subscriptions',
     },
     context: ({ req, res }) => ({ req, res, pubsub }),
   });

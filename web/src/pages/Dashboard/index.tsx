@@ -1,8 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Form } from '@unform/web';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FiMessageSquare, FiUsers, FiSettings, FiSend } from 'react-icons/fi';
+import {
+  FiMessageSquare,
+  FiUsers,
+  FiSettings,
+  FiSend,
+  FiPower,
+} from 'react-icons/fi';
+import { format, isToday, parseISO } from 'date-fns';
 
 import { FormHandles } from '@unform/core';
 import {
@@ -10,10 +17,10 @@ import {
   useListMessagesOfSpecificContactQuery,
   useNewMessageSubscription,
 } from '../../gql/generated/graphql';
+import Input from '../../components/Input';
 import Messages from '../../components/Messages';
 import Contacts from '../../components/Contacts';
 import AccountInfo from '../../components/AccountInfo';
-import LogoImg from '../../assets/logo.svg';
 import LeftTail from '../../assets/left-tail.svg';
 import RightTail from '../../assets/right-tail.svg';
 
@@ -41,14 +48,15 @@ interface User {
 }
 
 interface MessageSent {
-  id: string;
+  id?: string;
   to: string;
   from: string;
   text: string;
+  created_at: string;
 }
 
 const Dashboard: React.FC = () => {
-  const { user } = useAppState();
+  const { user, appLogout } = useAppState();
 
   const formRef = useRef<FormHandles>(null);
 
@@ -64,17 +72,21 @@ const Dashboard: React.FC = () => {
     variables: { contact_id: toChat.id },
   });
 
-  useEffect(() => {
-    setMessages(messagesOfSpecificContact?.listMessagesOfSpecificContact || []);
-  }, [toChat, messagesOfSpecificContact?.listMessagesOfSpecificContact]);
-
-  const [sendMessage] = useSendMessageMutation();
-
   const { data: newMessage } = useNewMessageSubscription({
     variables: { topic: toChat.id },
   });
 
-  console.log(newMessage);
+  useEffect(() => {
+    setMessages(messagesOfSpecificContact?.listMessagesOfSpecificContact || []);
+  }, [toChat, messagesOfSpecificContact?.listMessagesOfSpecificContact]);
+
+  useEffect(() => {
+    if (newMessage?.newMessage !== undefined) {
+      setMessages([...messages, newMessage.newMessage]);
+    }
+  }, [newMessage]);
+
+  const [sendMessage] = useSendMessageMutation();
 
   const handleSendMessage = useCallback(
     async (formData: SendMessageFormData, { reset }) => {
@@ -91,7 +103,7 @@ const Dashboard: React.FC = () => {
 
         reset();
       } catch (error) {
-        console.log(error);
+        toast.error('Ocorreu um erro ao enviar a mensagem');
       }
     },
     [sendMessage, toChat, messages],
@@ -113,7 +125,9 @@ const Dashboard: React.FC = () => {
             />
             <strong>{user.username}</strong>
           </div>
-          <img className="logo" src={LogoImg} alt="Link" />
+          <button type="button" onClick={appLogout}>
+            <FiPower color="#1E0547" size={24} />
+          </button>
         </UserHeader>
         {currentNav === 'messages' && <Messages setToChat={changeToChat} />}
         {currentNav === 'contacts' && <Contacts setToChat={changeToChat} />}
@@ -155,24 +169,32 @@ const Dashboard: React.FC = () => {
           <strong>{toChat.username}</strong>
         </ContactHeader>
         <Chat>
-          <Message messageType="in">
-            <div>
-              <img src={LeftTail} alt="tail" />
-              <span>Hows it Going?</span>
-            </div>
-          </Message>
           {messages.map(message => (
-            <Message key={message.id} messageType="out">
+            <Message
+              key={message.id}
+              messageType={message.from === user.id ? 'out' : 'in'}
+            >
               <div>
-                <img src={RightTail} alt="tail" />
+                <img
+                  src={message.from === user.id ? RightTail : LeftTail}
+                  alt="tail"
+                />
                 <span>{message.text}</span>
+                <span className="time">
+                  {isToday(parseISO(message.created_at))
+                    ? format(parseISO(message.created_at), "kk':'mm")
+                    : format(
+                        parseISO(message.created_at),
+                        "dd'/'MM'/'uuuu' - 'kk':'mm",
+                      )}
+                </span>
               </div>
             </Message>
           ))}
         </Chat>
         <InputMessage>
           <Form ref={formRef} onSubmit={handleSendMessage}>
-            <input name="text" type="text" placeholder="Escreva uma mensagem" />
+            <Input name="text" type="text" placeholder="Escreva uma mensagem" />
             <button type="submit">
               <FiSend size={24} color="#342B44" />
             </button>

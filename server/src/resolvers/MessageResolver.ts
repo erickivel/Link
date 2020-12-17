@@ -12,7 +12,7 @@ import {
   Subscription,
   UseMiddleware,
 } from 'type-graphql';
-import { max, compareAsc } from 'date-fns';
+import { max, compareAsc, isAfter, isBefore } from 'date-fns';
 
 import Message from '../database/entities/Message';
 import User from '../database/entities/User';
@@ -57,7 +57,19 @@ export default class MessageResolver {
       },
     });
 
-    return messagesSent.concat(messagesReceived);
+    const messagesSortedByDate = messagesSent
+      .concat(messagesReceived)
+      .sort((aMessage, bMessage) => {
+        if (isBefore(aMessage.created_at, bMessage.created_at)) {
+          return -1;
+        }
+        if (isAfter(aMessage.created_at, bMessage.created_at)) {
+          return 1;
+        }
+        return 0;
+      });
+
+    return messagesSortedByDate;
   }
 
   @Query(() => [ContactWithLastMessage])

@@ -7,6 +7,7 @@ import {
   split,
   ApolloLink,
   Observable,
+  concat,
 } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/client/link/ws';
@@ -108,9 +109,12 @@ const AppStateProvider: React.FC = ({ children }) => {
   });
 
   const wsLink = new WebSocketLink({
-    uri: 'ws://localhost:4000/graphql',
+    uri: 'ws://localhost:4000/subscriptions',
     options: {
       reconnect: true,
+      connectionParams: {
+        Authorization: data.token,
+      },
     },
   });
 

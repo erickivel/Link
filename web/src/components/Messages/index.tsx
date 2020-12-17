@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { format, isToday, isYesterday, parseISO } from 'date-fns';
 
-import { useListFirstMessageOfAllYourConversationsQuery } from '../../gql/generated/graphql';
+import {
+  useListFirstMessageOfAllYourConversationsQuery,
+  useNewMessageSubscription,
+} from '../../gql/generated/graphql';
 
 import { Container, Contacts, ContactItem } from './styles';
 
@@ -16,9 +19,27 @@ interface MessagesProps {
   setToChat(user: User): void;
 }
 
+interface LastMessage {
+  user: {
+    avatar?: string;
+    id: string;
+    username: string;
+  };
+  message: {
+    created_at: Date;
+    text: string;
+  };
+}
+
 const Messages: React.FC<MessagesProps> = ({ setToChat }) => {
   const { data } = useListFirstMessageOfAllYourConversationsQuery();
+
   const [currentUser, setCurrentUser] = useState('');
+  const [] = useState<LastMessage[]>([] as LastMessage[]);
+
+  const { data: newMessage } = useNewMessageSubscription({
+    variables: { topic: toChat.id },
+  });
 
   return (
     <Container>
@@ -57,7 +78,11 @@ const Messages: React.FC<MessagesProps> = ({ setToChat }) => {
 
               <div>
                 <strong>{message.user.username}</strong>
-                <span>{message.message.text}</span>
+                <span>
+                  {message.message.text.length > 35
+                    ? `${message.message.text.slice(0, 31)} ...`
+                    : message.message.text}
+                </span>
               </div>
 
               <span>{dateParsed}</span>

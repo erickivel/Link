@@ -11,7 +11,7 @@ interface TokenPayload {
 
 const checkAuthenticated = async (auth_token: string): Promise<boolean> => {
   try {
-    const [, token] = auth_token.split(' ');
+    const token = auth_token;
 
     const decoded = verify(token, authConfig.jwt.secret);
 
@@ -22,8 +22,6 @@ const checkAuthenticated = async (auth_token: string): Promise<boolean> => {
     if (!user) {
       return false;
     }
-
-    // console.log('asd');
 
     return true;
   } catch (err) {

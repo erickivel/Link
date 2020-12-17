@@ -59,8 +59,9 @@ export const UserHeader = styled.header`
     }
   }
 
-  img.logo {
-    width: 94px;
+  button {
+    background: transparent;
+    border: 0;
     margin-right: 32px;
   }
 `;
@@ -134,6 +135,24 @@ export const Chat = styled.div`
   padding-left: 9%;
   padding-right: 9%;
   padding-top: 30px;
+
+  overflow-y: auto;
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    background-color: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(39, 35, 51, 0.5);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  scroll-behavior: smooth;
 `;
 
 export const Message = styled.div<MessageProps>`
@@ -143,6 +162,10 @@ export const Message = styled.div<MessageProps>`
     props.messageType === 'in' ? 'flex-start' : 'flex-end'};
 
   div {
+    max-width: 75%;
+    display: flex;
+    flex-direction: column;
+
     background: ${props =>
       props.messageType === 'in' ? '#635878' : '#1E0547'};
     border-radius: ${props =>
@@ -152,8 +175,16 @@ export const Message = styled.div<MessageProps>`
     position: relative;
 
     span {
+      word-break: break-word;
       font-size: 14px;
       font-weight: normal;
+    }
+
+    span.time {
+      align-self: flex-end;
+      margin: 4px 0 -2px 10px;
+      font-size: 11px;
+      color: #bcb2c0;
     }
 
     svg {
@@ -191,7 +222,7 @@ export const InputMessage = styled.div`
 
     input {
       height: 40px;
-      width: 90%;
+      width: 95%;
       margin-left: 16px;
       background: #4a405f;
       border: 1px solid #4a405f;
