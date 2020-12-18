@@ -48,7 +48,9 @@ import checkAuthenticated from './utils/checkAuthenticated';
   const httpServer = http.createServer(app);
   apolloServer.installSubscriptionHandlers(httpServer);
 
-  httpServer.listen({ port: 4000 }, () =>
-    console.log('🚀 Server is running on port 4000'),
-  );
+  httpServer
+    .setMaxListeners(0)
+    .listen({ port: 4000 }, () =>
+      console.log('🚀 Server is running on port 4000'),
+    );
 })();
