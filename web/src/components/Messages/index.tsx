@@ -8,6 +8,7 @@ import {
 
 import { Container, Contacts, ContactItem } from './styles';
 import { useAppState } from '../../hooks/apollo';
+import avatarsArray from '../../utils/avatarsArray';
 
 interface User {
   id: string;
@@ -127,8 +128,14 @@ const Messages: React.FC<MessagesProps> = ({ setToChat, toChatId }) => {
                   }}
                 >
                   <img
-                    src="https://avatars2.githubusercontent.com/u/68995946?s=460&u=74f344654452d350d8139574615fbe3e1ef57684&v=4"
-                    alt=""
+                    src={
+                      message.user.avatar === undefined ||
+                      message.user.avatar === null ||
+                      message.user.avatar === 0
+                        ? avatarsArray[0]
+                        : avatarsArray[message.user.avatar]
+                    }
+                    alt="Avatar"
                   />
 
                   <div>

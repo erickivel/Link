@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Form } from '@unform/web';
 import { FiCamera } from 'react-icons/fi';
 import * as Yup from 'yup';
@@ -14,6 +14,9 @@ import { useUpdateUserMutation } from '../../gql/generated/graphql';
 
 import { Container } from './styles';
 import getValidationErrors from '../../utils/getValidationErrors';
+import ModalAvatar from '../ModalAvatar';
+
+import avatarsArray from '../../utils/avatarsArray';
 
 interface FormData {
   username: string;
@@ -25,8 +28,14 @@ interface FormData {
 
 const AccountInfo: React.FC = () => {
   const { user, updateUser } = useAppState();
-  const formRef = useRef<FormHandles>(null);
   const [updateUserMutation] = useUpdateUserMutation();
+  const formRef = useRef<FormHandles>(null);
+
+  const [avatarModalOpen, setAvatarModalOpen] = useState(false);
+
+  const toggleAvatarModal = useCallback(() => {
+    setAvatarModalOpen(!avatarModalOpen);
+  }, [avatarModalOpen]);
 
   const handleSubmit = useCallback(
     async (formData: FormData) => {
@@ -55,7 +64,7 @@ const AccountInfo: React.FC = () => {
         const formDataParsed = {
           username,
           about,
-          avatar: 1,
+          avatar: user.avatar || 0,
           ...(old_password
             ? {
                 old_password,
@@ -87,18 +96,25 @@ const AccountInfo: React.FC = () => {
         toast.error('Senha inválida');
       }
     },
-    [updateUser, user.id, updateUserMutation],
+    [updateUser, user, updateUserMutation],
   );
 
   return (
     <>
+      <ModalAvatar isOpen={avatarModalOpen} setIsOpen={toggleAvatarModal} />
       <Container>
         <div>
           <img
-            src="https://avatars2.githubusercontent.com/u/68995946?s=460&u=74f344654452d350d8139574615fbe3e1ef57684&v=4"
-            alt=""
+            src={
+              user.avatar === undefined ||
+              user.avatar === null ||
+              user.avatar === 0
+                ? avatarsArray[0]
+                : avatarsArray[user.avatar]
+            }
+            alt="Avatar"
           />
-          <button type="button" className="avatar">
+          <button type="button" className="avatar" onClick={toggleAvatarModal}>
             <FiCamera strokeWidth={1.5} color="#EDE8F4" size={24} />
           </button>
         </div>

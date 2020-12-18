@@ -122,7 +122,10 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation' } & {
   login: { __typename?: 'LoginResponse' } & Pick<LoginResponse, 'token'> & {
-      user: { __typename?: 'User' } & Pick<User, 'id' | 'username' | 'about'>;
+      user: { __typename?: 'User' } & Pick<
+        User,
+        'id' | 'username' | 'about' | 'avatar'
+      >;
     };
 };
 
@@ -264,6 +267,7 @@ export const LoginDocument = gql`
         id
         username
         about
+        avatar
       }
       token
     }

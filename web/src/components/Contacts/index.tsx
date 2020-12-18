@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { useUsersQuery } from '../../gql/generated/graphql';
+import avatarsArray from '../../utils/avatarsArray';
 
 import { Container, ContactsBox, ContactItem } from './styles';
 
@@ -44,8 +45,14 @@ const Contacts: React.FC<ContactsProps> = ({ setToChat, setNav }) => {
               }}
             >
               <img
-                src="https://avatars2.githubusercontent.com/u/68995946?s=460&u=74f344654452d350d8139574615fbe3e1ef57684&v=4"
-                alt=""
+                src={
+                  user.avatar === undefined ||
+                  user.avatar === null ||
+                  user.avatar === 0
+                    ? avatarsArray[0]
+                    : avatarsArray[user.avatar]
+                }
+                alt="Avatar"
               />
 
               <div>

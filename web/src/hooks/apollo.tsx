@@ -7,7 +7,6 @@ import {
   split,
   ApolloLink,
   Observable,
-  concat,
 } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/client/link/ws';
@@ -15,7 +14,7 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 interface User {
   id: string;
   username: string;
-  avatar?: number | null | undefined;
+  avatar?: number | undefined | null;
   about?: string | undefined | null;
 }
 
