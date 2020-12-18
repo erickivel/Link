@@ -1,10 +1,20 @@
 import { shade } from 'polished';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 interface ContactItemProps {
   currentUser: string;
   contactId: string;
 }
+
+const appearFromLeft = keyframes`
+from{
+  opacity: 0;
+  transform: translateX(-150px);
+} to{
+  opacity: 1;
+  transform: translateX(0);
+}
+`;
 
 export const Container = styled.div`
   grid-area: components;
@@ -29,6 +39,7 @@ export const Container = styled.div`
 `;
 
 export const ContactsBox = styled.div`
+  animation: ${appearFromLeft} 0.4s;
   margin: 12px 0;
 
   div:last-child::before {
@@ -38,6 +49,7 @@ export const ContactsBox = styled.div`
 
 export const ContactItem = styled.div<ContactItemProps>`
   padding: 12px 32px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   position: relative;

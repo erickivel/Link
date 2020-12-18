@@ -13,16 +13,18 @@ interface User {
 
 interface ContactsProps {
   setToChat(user: User): void;
+  setNav(newNav: 'messages' | 'contacts' | 'accountInfo'): void;
 }
 
-const Contacts: React.FC<ContactsProps> = ({ setToChat }) => {
-  const { data } = useUsersQuery();
+const Contacts: React.FC<ContactsProps> = ({ setToChat, setNav }) => {
+  const { data: contactsData } = useUsersQuery();
+
   const [currentUser, setCurrentUser] = useState('');
 
   return (
     <Container>
       <ContactsBox>
-        {data?.users.map(user => {
+        {contactsData?.users.map(user => {
           const userAboutParsed =
             user.about !== null &&
             user.about !== undefined &&
@@ -38,6 +40,7 @@ const Contacts: React.FC<ContactsProps> = ({ setToChat }) => {
               onClick={() => {
                 setToChat(user);
                 setCurrentUser(user.id);
+                setNav('messages');
               }}
             >
               <img
