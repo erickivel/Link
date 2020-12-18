@@ -76,7 +76,7 @@ export default class MessageResolver {
   @UseMiddleware(ensureAuthenticated)
   async listFirstMessageOfAllYourConversations(
     @Ctx() { userId }: MyContext,
-  ): Promise<Promise<ContactWithLastMessage>[]> {
+  ): Promise<ContactWithLastMessage[]> {
     const userMessagesSent = await Message.find({
       where: {
         to: userId,
@@ -99,8 +99,8 @@ export default class MessageResolver {
       return allContacts.indexOf(item) === pos;
     });
 
-    const lastMessageOfEachContact = contactsWithoutDuplicates.map(
-      async contact => {
+    const lastMessageOfEachContact = await Promise.all(
+      contactsWithoutDuplicates.map(async contact => {
         const allMessagesOfRespectiveContact = userMessages.filter(
           message => message.from === contact || message.to === contact,
         );
@@ -123,10 +123,23 @@ export default class MessageResolver {
           user,
           message,
         };
+      }),
+    );
+    const lastMessagesSortedByDate = lastMessageOfEachContact.sort(
+      (aMessage, bMessage) => {
+        if (
+          isBefore(aMessage.message.created_at, bMessage.message.created_at)
+        ) {
+          return 1;
+        }
+        if (isAfter(aMessage.message.created_at, bMessage.message.created_at)) {
+          return -1;
+        }
+        return 0;
       },
     );
 
-    return lastMessageOfEachContact;
+    return lastMessagesSortedByDate;
   }
 
   @Mutation(() => Message)
