@@ -1,5 +1,15 @@
 import { shade } from 'polished';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const appearFromLeft = keyframes`
+from{
+  opacity: 0;
+  transform: translateX(-150px);
+} to{
+  opacity: 1;
+  transform: translateX(0);
+}
+`;
 
 export const Container = styled.div`
   grid-area: components;
@@ -10,12 +20,13 @@ export const Container = styled.div`
   justify-content: center;
 
   div {
+    animation: ${appearFromLeft} 0.4s;
     position: relative;
 
     img {
-      width: 156px;
-      height: 156px;
-      border-radius: 78px;
+      width: 164px;
+      height: 164px;
+      border-radius: 82px;
       margin-bottom: 16px;
     }
 
@@ -42,6 +53,7 @@ export const Container = styled.div`
   }
 
   form {
+    margin-top: 24px;
     width: 100%;
     max-width: 352px;
 
