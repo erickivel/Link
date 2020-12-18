@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import http from 'http';
@@ -12,6 +13,9 @@ import checkAuthenticated from './utils/checkAuthenticated';
 
 (async () => {
   const app = express();
+
+  dotenv.config();
+
   app.use(express.json());
 
   app.use(cors());
@@ -50,7 +54,7 @@ import checkAuthenticated from './utils/checkAuthenticated';
 
   httpServer
     .setMaxListeners(0)
-    .listen({ port: 4000 }, () =>
+    .listen({ port: process.env.PORT || 4000 }, () =>
       console.log('🚀 Server is running on port 4000'),
     );
 })();
