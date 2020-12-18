@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { shade } from 'polished';
 
 interface NavigationProps {
@@ -15,6 +15,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
 `;
 
 export const Content = styled.div`
@@ -27,9 +28,9 @@ export const Content = styled.div`
   grid-template-columns: 448px auto;
   grid-template-rows: 64px auto 64px;
   grid-template-areas:
-    'userHeader contactHeader'
-    'components chat'
-    'navigation messageInput';
+    'userHeader messages'
+    'components messages'
+    'navigation messages';
 `;
 
 export const UserHeader = styled.header`
@@ -108,6 +109,53 @@ export const Navigation = styled.nav<NavigationProps>`
   }
 `;
 
+export const NoConverseSelected = styled.div`
+  grid-area: messages;
+  background: #342b44;
+  border-radius: 0 10px 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  h1 {
+    max-width: 410px;
+    text-align: center;
+    font-family: 'Poppins';
+  }
+
+  img {
+    margin-top: 40px;
+    width: 188px;
+  }
+`;
+
+const appear = keyframes`
+from{
+  opacity: 0;
+  transform: scale(1.5);
+} to{
+  opacity: 1;
+  transform: translateX(1);
+}
+`;
+
+export const AnimationContainer = styled.div`
+  animation: ${appear} 0.3s;
+  height: 93vh;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+
+  grid-area: messages;
+  display: grid;
+  grid-template-rows: 64px auto 64px;
+  grid-template-areas:
+    'contactHeader'
+    'chat'
+    'messageInput';
+`;
+
 export const ContactHeader = styled.header`
   grid-area: contactHeader;
   background: #635878;
@@ -151,8 +199,6 @@ export const Chat = styled.div`
   ::-webkit-scrollbar-track {
     background-color: transparent;
   }
-
-  scroll-behavior: smooth;
 `;
 
 export const Message = styled.div<MessageProps>`
@@ -170,7 +216,7 @@ export const Message = styled.div<MessageProps>`
       props.messageType === 'in' ? '#635878' : '#1E0547'};
     border-radius: ${props =>
       props.messageType === 'in' ? '0 7px 7px 7px' : '7px 0 7px 7px'};
-    margin-bottom: 12px;
+    margin-bottom: 6px;
     padding: 6px 7px 8px 9px;
     position: relative;
 
