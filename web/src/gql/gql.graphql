@@ -1,0 +1,98 @@
+mutation Register($about: String, $password: String!, $username: String!) {
+  register(about: $about, password: $password, username: $username) {
+    id
+  }
+}
+
+mutation Login($password: String!, $username: String!) {
+  login(username: $username, password: $password) {
+    user {
+      id
+      username
+      about
+    }
+    token
+  }
+}
+
+mutation UpdateUser(
+    $password: String
+    $old_password: String
+    $avatar: Float!
+    $about: String!
+    $username: String!
+  ) {
+    updateUser(
+    password: $password,
+    old_password: $old_password,
+    avatar: $avatar,
+    about: $about,
+    username: $username
+    ) {
+      username
+      about
+      avatar
+    }
+  }
+
+mutation SendMessage($text: String!, $to: String!) {
+  sendMessage(text: $text, to: $to) {
+    id
+    to
+    from
+    text
+    created_at
+  }
+}
+
+query Users {
+  users {
+    id
+    username
+    about
+    avatar
+  }
+}
+
+query Me {
+  me {
+    username
+    about
+    avatar
+  }
+}
+
+query ListMessagesOfSpecificContact($contact_id: String!) {
+  listMessagesOfSpecificContact(contact_id: $contact_id) {
+    id
+    to
+    from
+    text
+    created_at
+  }
+}
+
+query ListFirstMessageOfAllYourConversations {
+  listFirstMessageOfAllYourConversations {
+    message {
+      created_at
+      text
+    }
+    user {
+      id
+      username
+      avatar
+    }
+  }
+}
+
+
+
+subscription NewMessage($topic: String!) {
+  newMessage(topic: $topic) {
+    to
+    from
+    text
+    created_at
+  }
+}
