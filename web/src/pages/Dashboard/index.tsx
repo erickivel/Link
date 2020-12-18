@@ -25,6 +25,8 @@ import NoSelectedMessagesImg from '../../assets/noSelectedMessages.svg';
 import LeftTail from '../../assets/left-tail.svg';
 import RightTail from '../../assets/right-tail.svg';
 
+import avatarsArray from '../../utils/avatarsArray';
+
 import {
   Container,
   Content,
@@ -46,7 +48,7 @@ interface SendMessageFormData {
 interface User {
   id: string;
   username: string;
-  avatar?: number | null | undefined;
+  avatar?: number | undefined | null;
   about?: string | undefined | null;
 }
 
@@ -149,8 +151,14 @@ const Dashboard: React.FC = () => {
         <UserHeader>
           <div>
             <img
-              src="https://avatars2.githubusercontent.com/u/68995946?s=460&u=74f344654452d350d8139574615fbe3e1ef57684&v=4"
-              alt=""
+              src={
+                user.avatar === undefined ||
+                user.avatar === null ||
+                user.avatar === 0
+                  ? avatarsArray[0]
+                  : avatarsArray[user.avatar]
+              }
+              alt="Avatar"
             />
             <strong>{user.username}</strong>
           </div>
@@ -203,8 +211,14 @@ const Dashboard: React.FC = () => {
           <AnimationContainer>
             <ContactHeader>
               <img
-                src="https://avatars2.githubusercontent.com/u/68995946?s=460&u=74f344654452d350d8139574615fbe3e1ef57684&v=4"
-                alt=""
+                src={
+                  toChat.avatar === undefined ||
+                  toChat.avatar === null ||
+                  toChat.avatar === 0
+                    ? avatarsArray[0]
+                    : avatarsArray[toChat.avatar]
+                }
+                alt="Avatar"
               />
               <strong>{toChat.username}</strong>
             </ContactHeader>
