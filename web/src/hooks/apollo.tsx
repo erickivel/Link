@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
+import dotenv from 'dotenv';
 import {
   ApolloProvider,
   ApolloClient,
@@ -104,11 +105,11 @@ const AppStateProvider: React.FC = ({ children }) => {
   );
 
   const httpLink = new HttpLink({
-    uri: 'http://localhost:4000/graphql',
+    uri: process.env.REACT_APP_API_URL || 'http://localhost:4000/graphql',
   });
 
   const wsLink = new WebSocketLink({
-    uri: 'ws://localhost:4000/subscriptions',
+    uri: process.env.REACT_APP_API_WS || 'ws://localhost:4000/subscriptions',
     options: {
       reconnect: true,
       connectionParams: {
