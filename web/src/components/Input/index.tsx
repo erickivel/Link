@@ -31,6 +31,7 @@ const Input: React.FC<InputProps> = ({ name, textArea, ...rest }) => {
             id={fieldName}
             ref={inputRef}
             defaultValue={defaultValue}
+            autoComplete="off"
             placeholder="Escreva um recado (aparecerá para outros usuários)"
           />
 
@@ -43,6 +44,7 @@ const Input: React.FC<InputProps> = ({ name, textArea, ...rest }) => {
             id={fieldName}
             ref={inputRef}
             defaultValue={defaultValue}
+            autoComplete="off"
             {...rest}
           />
 

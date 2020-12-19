@@ -18,7 +18,7 @@ interface ContactsProps {
 }
 
 const Contacts: React.FC<ContactsProps> = ({ setToChat, setNav }) => {
-  const { data: contactsData } = useUsersQuery();
+  const { data: contactsData, loading } = useUsersQuery();
 
   const [currentUser, setCurrentUser] = useState('');
 
@@ -33,7 +33,9 @@ const Contacts: React.FC<ContactsProps> = ({ setToChat, setNav }) => {
               ? `${user.about.slice(0, 31)} ...`
               : user.about;
 
-          return (
+          return loading ? (
+            'Carregando...'
+          ) : (
             <ContactItem
               key={user.id}
               contactId={user.id}

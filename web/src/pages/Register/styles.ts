@@ -17,6 +17,10 @@ export const Content = styled.div`
   max-width: 672px;
 
   background-color: #4a405f;
+
+  @media (max-width: 1000px) {
+    max-width: 1000px;
+  }
 `;
 
 const appearFromLeft = keyframes`
@@ -42,6 +46,10 @@ export const AnimationContainer = styled.div`
     width: 100%;
     max-width: 352px;
     text-align: center;
+
+    @media (max-width: 430px) {
+      max-width: 280px;
+    }
 
     h1 {
       font-family: 'Poppins';
@@ -81,6 +89,10 @@ export const AnimationContainer = styled.div`
 export const Images = styled.div`
   flex: 1;
   position: relative;
+
+  @media (max-width: 1000px) {
+    display: none;
+  }
 
   img.logo {
     position: absolute;

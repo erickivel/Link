@@ -15,7 +15,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  overflow: hidden;
+  overflow: auto;
 `;
 
 export const Content = styled.div`
@@ -31,6 +31,12 @@ export const Content = styled.div`
     'userHeader messages'
     'components messages'
     'navigation messages';
+
+  @media (max-width: 768px) {
+    & {
+      grid-template-columns: 320px 320px;
+    }
+  }
 `;
 
 export const UserHeader = styled.header`
