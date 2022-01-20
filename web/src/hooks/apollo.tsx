@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import {
   ApolloProvider,
   ApolloClient,
