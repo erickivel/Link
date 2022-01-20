@@ -3,9 +3,9 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import http from 'http';
+import { createConnection } from 'typeorm';
 import { ApolloServer, PubSub } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
-import { createConnection } from 'typeorm';
 
 import UserResolver from './resolvers/UserResolver';
 import MessageResolver from './resolvers/MessageResolver';
