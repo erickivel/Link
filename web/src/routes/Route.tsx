@@ -17,21 +17,21 @@ const Route: React.FC<RouteProps> = ({
   component: Component,
   ...rest
 }) => {
-  const { user } = useAppState();
+  const { isTokenExpired } = useAppState();
 
   return (
     <ReactDOMRoute
       {...rest}
       render={({ location }) => {
-        return isPrivate === !!user ? (
-          <Component />
-        ) : (
+        return isPrivate === isTokenExpired() ? (
           <Redirect
             to={{
               pathname: isPrivate ? '/' : 'dashboard',
               state: { from: location },
             }}
           />
+        ) : (
+          <Component />
         );
       }}
     />
