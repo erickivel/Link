@@ -11,18 +11,12 @@ import {
 } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/client/link/ws';
-import jwtDecode from 'jwt-decode';
-import { isBefore } from 'date-fns';
 
 interface User {
   id: string;
   username: string;
   avatar?: number | undefined | null;
   about?: string | undefined | null;
-}
-
-interface Token {
-  exp: number;
 }
 
 interface AuthState {
@@ -35,7 +29,6 @@ interface ApolloContextData {
   appLogin(userData: AuthState): void;
   appLogout(): void;
   updateUser(user: User): void;
-  isTokenExpired(): boolean;
 }
 
 export const AppStateContext = createContext<ApolloContextData>(
@@ -56,15 +49,6 @@ const AppStateProvider: React.FC = ({ children }) => {
 
     return {} as AuthState;
   });
-
-  const isTokenExpired = useCallback(() => {
-    const tokenDecode: Token = jwtDecode(data.token);
-
-    const isExpired = isBefore(new Date(tokenDecode.exp * 1000), new Date())
-
-    return isExpired;
-  }, []);
-
 
   const appLogin = useCallback(({ token, user }: AuthState) => {
     localStorage.setItem('@Link:token', token);
@@ -158,7 +142,6 @@ const AppStateProvider: React.FC = ({ children }) => {
         appLogin,
         appLogout,
         updateUser,
-        isTokenExpired
       }}
     >
       <ApolloProvider client={client}>{children}</ApolloProvider>
