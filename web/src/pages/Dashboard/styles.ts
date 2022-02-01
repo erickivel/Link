@@ -47,6 +47,7 @@ export const UserHeader = styled.header`
   align-items: center;
   justify-content: space-between;
   border-radius: 10px 0 0 0;
+  cursor: pointer;
 
   div {
     display: flex;
@@ -219,9 +220,9 @@ export const Message = styled.div<MessageProps>`
     flex-direction: column;
 
     background: ${props =>
-      props.messageType === 'in' ? '#635878' : '#1E0547'};
+    props.messageType === 'in' ? '#635878' : '#1E0547'};
     border-radius: ${props =>
-      props.messageType === 'in' ? '0 7px 7px 7px' : '7px 0 7px 7px'};
+    props.messageType === 'in' ? '0 7px 7px 7px' : '7px 0 7px 7px'};
     margin-bottom: 6px;
     padding: 6px 7px 8px 9px;
     position: relative;
@@ -247,11 +248,11 @@ export const Message = styled.div<MessageProps>`
       position: absolute;
       top: 0;
       ${props =>
-        props.messageType === 'in'
-          ? css`
+    props.messageType === 'in'
+      ? css`
               left: -6px;
             `
-          : css`
+      : css`
               right: -6px;
             `}
     }

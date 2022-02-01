@@ -119,6 +119,10 @@ const Dashboard: React.FC = () => {
   const handleSendMessage = useCallback(
     async (formData: SendMessageFormData, { reset }) => {
       try {
+        if (!formData.text) {
+          return;
+        }
+
         const { data: dataMessage } = await sendMessage({
           variables: { text: formData.text, to: toChat.id },
         });
@@ -148,13 +152,13 @@ const Dashboard: React.FC = () => {
     <Container>
       <ToastContainer />
       <Content>
-        <UserHeader>
+        <UserHeader onClick={() => setCurrentNav('accountInfo')}>
           <div>
             <img
               src={
                 user.avatar === undefined ||
-                user.avatar === null ||
-                user.avatar === 0
+                  user.avatar === null ||
+                  user.avatar === 0
                   ? avatarsArray[0]
                   : avatarsArray[user.avatar]
               }
@@ -213,8 +217,8 @@ const Dashboard: React.FC = () => {
               <img
                 src={
                   toChat.avatar === undefined ||
-                  toChat.avatar === null ||
-                  toChat.avatar === 0
+                    toChat.avatar === null ||
+                    toChat.avatar === 0
                     ? avatarsArray[0]
                     : avatarsArray[toChat.avatar]
                 }
@@ -238,9 +242,9 @@ const Dashboard: React.FC = () => {
                       {isToday(parseISO(message.created_at))
                         ? format(parseISO(message.created_at), "kk':'mm")
                         : format(
-                            parseISO(message.created_at),
-                            "dd'/'MM'/'uuuu' - 'kk':'mm",
-                          )}
+                          parseISO(message.created_at),
+                          "dd'/'MM'/'uuuu' - 'kk':'mm",
+                        )}
                     </span>
                   </div>
                 </Message>
