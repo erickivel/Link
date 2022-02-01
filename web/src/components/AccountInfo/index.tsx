@@ -67,9 +67,9 @@ const AccountInfo: React.FC = () => {
           avatar: user.avatar || 0,
           ...(old_password
             ? {
-                old_password,
-                password,
-              }
+              old_password,
+              password,
+            }
             : {}),
         };
 
@@ -107,8 +107,8 @@ const AccountInfo: React.FC = () => {
           <img
             src={
               user.avatar === undefined ||
-              user.avatar === null ||
-              user.avatar === 0
+                user.avatar === null ||
+                user.avatar === 0
                 ? avatarsArray[0]
                 : avatarsArray[user.avatar]
             }
@@ -126,6 +126,7 @@ const AccountInfo: React.FC = () => {
             about: user.about,
           }}
           onSubmit={handleSubmit}
+          autoComplete="off"
         >
           <Input type="text" name="username" placeholder="Nome" />
 
@@ -133,9 +134,16 @@ const AccountInfo: React.FC = () => {
             type="password"
             name="old_password"
             placeholder="Senha atual"
+            // Prevent autocomplete
+            autoComplete="new-password"
           />
 
-          <Input type="password" name="password" placeholder="Nova senha" />
+          <Input
+            type="password"
+            name="password"
+            placeholder="Nova senha"
+            autoComplete="new-password"
+          />
 
           <Input textArea name="about" />
 
