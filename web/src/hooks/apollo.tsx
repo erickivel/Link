@@ -58,11 +58,14 @@ const AppStateProvider: React.FC = ({ children }) => {
   });
 
   const isTokenExpired = useCallback(() => {
-    const tokenDecode: Token = jwtDecode(data.token);
+    if (data.token) {
+      const tokenDecode: Token = jwtDecode(data.token);
 
-    const isExpired = isBefore(new Date(tokenDecode.exp * 1000), new Date())
+      const isExpired = isBefore(new Date(tokenDecode.exp * 1000), new Date())
 
-    return isExpired;
+      return isExpired;
+    }
+    return true
   }, [data.token]);
 
 
