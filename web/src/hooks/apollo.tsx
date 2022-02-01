@@ -80,8 +80,8 @@ const AppStateProvider: React.FC = ({ children }) => {
   }, []);
 
   const appLogout = useCallback(() => {
-    localStorage.removeItem('@GoBarber:token');
-    localStorage.removeItem('@GoBarber:user');
+    localStorage.removeItem('@Link:token');
+    localStorage.removeItem('@Link:user');
 
     setData({} as AuthState);
   }, []);
